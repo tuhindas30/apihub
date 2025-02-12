@@ -11,9 +11,9 @@ import {
 import {
   createTodoValidator,
   getAllTodosQueryValidators,
-  todoPathVariableValidator,
   updateTodoValidator,
 } from "../../../validators/apps/todo/todo.validators.js";
+import { mongoIdPathVariableValidator } from "../../../validators/common/mongodb.validators.js";
 import { validate } from "../../../validators/validate.js";
 
 const router = Router();
@@ -25,17 +25,21 @@ router
 
 router
   .route("/:todoId")
-  .get(todoPathVariableValidator(), validate, getTodoById)
+  .get(mongoIdPathVariableValidator("todoId"), validate, getTodoById)
   .patch(
-    todoPathVariableValidator(),
+    mongoIdPathVariableValidator("todoId"),
     updateTodoValidator(),
     validate,
     updateTodo
   )
-  .delete(deleteTodo);
+  .delete(mongoIdPathVariableValidator("todoId"), validate, deleteTodo);
 
 router
   .route("/toggle/status/:todoId")
-  .patch(todoPathVariableValidator(), validate, toggleTodoDoneStatus);
+  .patch(
+    mongoIdPathVariableValidator("todoId"),
+    validate,
+    toggleTodoDoneStatus
+  );
 
 export default router;

@@ -168,7 +168,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     req.user._id,
     {
       $set: {
-        refreshToken: undefined,
+        refreshToken: '',
       },
     },
     { new: true }
@@ -216,7 +216,7 @@ const verifyEmail = asyncHandler(async (req, res) => {
   // Now we can remove the associated email token and expiry date as we no  longer need them
   user.emailVerificationToken = undefined;
   user.emailVerificationExpiry = undefined;
-  // Tun the email verified flag to `true`
+  // Turn the email verified flag to `true`
   user.isEmailVerified = true;
   await user.save({ validateBeforeSave: false });
 
@@ -295,6 +295,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken: newRefreshToken } =
       await generateAccessAndRefreshTokens(user._id);
 
+    // Update the user's refresh token in the database
+    user.refreshToken = newRefreshToken;
+    await user.save();
+
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
@@ -338,10 +342,7 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
       user.username,
       // ! NOTE: Following link should be the link of the frontend page responsible to request password reset
       // ! Frontend will send the below token with the new password in the request body to the backend reset password endpoint
-      // * Ideally take the url from the .env file which should be teh url of the frontend
-      `${req.protocol}://${req.get(
-        "host"
-      )}/api/v1/users/reset-password/${unHashedToken}`
+      `${process.env.FORGOT_PASSWORD_REDIRECT_URL}/${unHashedToken}`
     ),
   });
   return res

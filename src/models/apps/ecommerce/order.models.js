@@ -22,19 +22,19 @@ const orderSchema = new Schema(
       required: true,
     },
     coupon: {
-      type: mongoose.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Coupon",
       default: null,
     },
     customer: {
-      type: mongoose.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
     },
     items: {
       type: [
         {
           productId: {
-            type: mongoose.Types.ObjectId,
+            type: Schema.Types.ObjectId,
             ref: "Product",
           },
           quantity: {
@@ -48,8 +48,29 @@ const orderSchema = new Schema(
       default: [],
     },
     address: {
-      type: mongoose.Types.ObjectId,
-      ref: "Address",
+      addressLine1: {
+        required: true,
+        type: String,
+      },
+      addressLine2: {
+        type: String,
+      },
+      city: {
+        required: true,
+        type: String,
+      },
+      country: {
+        required: true,
+        type: String,
+      },
+      pincode: {
+        required: true,
+        type: String,
+      },
+      state: {
+        required: true,
+        type: String,
+      },
     },
     status: {
       type: String,
